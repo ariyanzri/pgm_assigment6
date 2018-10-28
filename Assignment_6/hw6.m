@@ -1,4 +1,4 @@
-colony_size = 2;
+colony_size = 10;
 num_angles = 9;
 angle_step = 15;
 
@@ -8,7 +8,7 @@ angle_step = 15;
 % Create and array of 0's and 1 with 2/3 of the entries filled with 1's
 gender = rand(1, colony_size) < 2/3
 %gender = ones(1, colony_size)
-gender(1) = 1;
+%gender(1) = 1;
 
 % 0 - Hexagon
 % 1 - Circle
@@ -66,8 +66,8 @@ for i = 1 : colony_size
     rila = find( CP_RILA >= rand(), 1) + 2
     
     % Find the left side angles using the symmetry
-    liaa = 10 - riaa
-    lila = 10 - rila
+    liaa = num_angles + 1 - riaa
+    lila = num_angles + 1 - rila
 
     % Find the outer angles based on the inner angles
     % Index to the OA cumulative probability maps to the
@@ -93,41 +93,42 @@ for i = 1 : colony_size
     o_loaa = loaa + find( ERR >= rand(), 1) - 3
     o_lola = lola + find( ERR >= rand(), 1) - 3
 
+    % Correct for angles that falls beyond the range
     if o_roaa > 9
         o_roaa = 9
-    elseif o_roaa < 0
-        o_roaa = 0
+    elseif o_roaa < 1
+        o_roaa = 1
     end
 
     if o_rola > 9
         o_rola = 9
-    elseif o_rola < 0
-        o_rola = 0
+    elseif o_rola < 1
+        o_rola = 1
     end
 
     if o_loaa > 9
         o_loaa = 9
-    elseif o_loaa < 0
-        o_loaa = 0
+    elseif o_loaa < 1
+        o_loaa = 1
     end
 
     if o_lola > 9
         o_lola = 9
-    elseif o_lola < 0
-        o_lola = 0
+    elseif o_lola < 1
+        o_lola = 1
     end
 
     idealized = draw_mql(num_angles, angle_step, gender(i) , riaa, rila, liaa, lila, roaa, rola, loaa, lola);
     heading = sprintf( 'Sample %d - Actual %s', i, gender_label);
     title(heading);
     
-    file_name = sprintf('%s.png', heading );
+    file_name = sprintf( 'Sample-%d-Actual.png', i);
     saveas( idealized, file_name );
 
     observed = draw_mql(num_angles, angle_step, shape(i) , o_riaa, o_rila, o_liaa, o_lila, o_roaa, o_rola, o_loaa, o_lola);
     heading = sprintf( 'Sample %d - Observed %s', i, gender_label);
     title(heading);
     
-    file_name = sprintf('%s.png', heading );
+    file_name = sprintf( 'Sample-%d-Observed.png', i);
     saveas( observed, file_name );
 end
